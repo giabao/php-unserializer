@@ -66,30 +66,37 @@ public class SerializedPhpParser {
 	public Object parse() {
 		char type = input.charAt(index);
 		switch (type) {
-		case 'i':
-			index += 2;
-			return parseInt();
-		case 'd':
-			index += 2;
-			return parseFloat();
-		case 'b':
-			index += 2;
-			return parseBoolean();
-		case 's':
-			index += 2;
-			return parseString();
-		case 'a':
-			index += 2;
-			return parseArray();
-		case 'O':
-			index += 2;
-			return parseObject();
-		case 'N':
-			index += 2;
-			return NULL;
-		default:
-			throw new IllegalStateException("Encountered unknown type [" + type
-					+ "]");
+		    case 'i':
+                        index += 2;
+                        // Patch Integer/Double for the PHP x64.
+                        Object tmp;
+                        tmp = parseInt();
+                        if (tmp == null) {
+                            tmp = parseFloat();
+                        }
+                        return tmp;
+                        // End of Patch Integer/Double for the PHP x64.
+                    case 'd':
+                        index += 2;
+                        return parseFloat();
+                    case 'b':
+                        index += 2;
+                        return parseBoolean();
+                    case 's':
+                        index += 2;
+                        return parseString();
+                    case 'a':
+                        index += 2;
+                        return parseArray();
+                    case 'O':
+                        index += 2;
+                        return parseObject();
+                    case 'N':
+                        index += 2;
+                        return NULL;
+                    default:
+                        throw new IllegalStateException("Encountered unknown type [" + type
+                                + "]");
 		}
 	}
 
@@ -190,10 +197,19 @@ public class SerializedPhpParser {
 	}
 
 	private Integer parseInt() {
-		int delimiter = input.indexOf(';', index);
+		int delimiter = input.indexOf(';', index);         
+                // Let's store old value of the index for the patch Integer/Double for the PHP x64.
+                int index_old=index;
 		String value = input.substring(index, delimiter);
 		index = delimiter + 1;
-		return Integer.valueOf(value);
+                // Patch Integer/Double for the PHP x64.
+                try {
+                    return Integer.valueOf(value);
+                } catch (Exception ex) {
+                    index=index_old;
+                }
+		return null;
+                // End of Patch Integer/Double for the PHP x64.
 	}
 	
 	public void setAcceptedAttributeNameRegex(String acceptedAttributeNameRegex) {

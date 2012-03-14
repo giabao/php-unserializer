@@ -21,6 +21,12 @@ public class SerializedPhpParserTest extends TestCase {
 	public void testParseFloat() throws Exception {
 		assertPrimitive("d:123.123;", 123.123d);
 	}
+	public void testParseFloatRecognizedAsInteger1() throws Exception {
+		assertPrimitive("i:3422865137422183;", 3.422865137422183E15);
+	}
+	public void testParseFloatRecognizedAsInteger2() throws Exception {
+		assertPrimitive("i:100010001804;", 1.00010001804E11);
+	}
 
 	public void testParseBoolean() throws Exception {
 		assertPrimitive("b:1;", Boolean.TRUE);
