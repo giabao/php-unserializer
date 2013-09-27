@@ -14,13 +14,9 @@ object Build extends sbt.Build {
       name := "serialized-php-parser",
       organization := "name.khartn",
       version := "1.0",
-      resolvers ++= Seq(
-        "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases"
-      ),
       libraryDependencies ++= Seq(
-        "com.googlecode.json-simple" % "json-simple" % "1.1.1",
-        "org.scalatest" %% "scalatest" % "2.0.M8" % "test",
-        "com.novocode" % "junit-interface" % "0.10" //for running junit in sbt
+        "org.scalatest" %% "scalatest"      % "2.0.M8"  % "test",
+        "com.novocode"  % "junit-interface" % "0.10"    % "test" //for running junit in sbt
       )
     )
   )
