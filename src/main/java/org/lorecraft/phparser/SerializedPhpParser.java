@@ -63,42 +63,41 @@ public class SerializedPhpParser {
 		this.assumeUTF8 = assumeUTF8;
 	}
 
-	public Object parse() {
-		char type = input.charAt(index);
-		switch (type) {
-		    case 'i':
-                        index += 2;
-                        // Patch Integer/Double for the PHP x64.
-                        Object tmp;
-                        tmp = parseInt();
-                        if (tmp == null) {
-                            tmp = parseFloat();
-                        }
-                        return tmp;
-                        // End of Patch Integer/Double for the PHP x64.
-                    case 'd':
-                        index += 2;
-                        return parseFloat();
-                    case 'b':
-                        index += 2;
-                        return parseBoolean();
-                    case 's':
-                        index += 2;
-                        return parseString();
-                    case 'a':
-                        index += 2;
-                        return parseArray();
-                    case 'O':
-                        index += 2;
-                        return parseObject();
-                    case 'N':
-                        index += 2;
-                        return NULL;
-                    default:
-                        throw new IllegalStateException("Encountered unknown type [" + type
-                                + "]");
-		}
-	}
+    public Object parse() {
+        char type = input.charAt(index);
+        switch (type) {
+            case 'i':
+                index += 2;
+                // Patch Integer/Double for the PHP x64.
+                Object tmp;
+                tmp = parseInt();
+                if (tmp == null) {
+                    tmp = parseFloat();
+                }
+                return tmp;
+            // End of Patch Integer/Double for the PHP x64.
+            case 'd':
+                index += 2;
+                return parseFloat();
+            case 'b':
+                index += 2;
+                return parseBoolean();
+            case 's':
+                index += 2;
+                return parseString();
+            case 'a':
+                index += 2;
+                return parseArray();
+            case 'O':
+                index += 2;
+                return parseObject();
+            case 'N':
+                index += 2;
+                return NULL;
+            default:
+                throw new IllegalStateException("Encountered unknown type [" + type + "]");
+        }
+    }
 
 	private Object parseObject() {
 		PhpObject phpObject = new PhpObject();
@@ -119,7 +118,7 @@ public class SerializedPhpParser {
 
 	private Map<Object, Object> parseArray() {
 		int arrayLen = readLength();
-		Map<Object, Object> result = new LinkedHashMap<Object, Object>();
+		Map<Object, Object> result = new LinkedHashMap<>();
 		for (int i = 0; i < arrayLen; i++) {
 			Object key = parse();
 			Object value = parse();
@@ -132,14 +131,10 @@ public class SerializedPhpParser {
 	}
 
 	private boolean isAcceptedAttribute(Object key) {
-		if (acceptedAttributeNameRegex == null) {
-			return true;
-		}
-		if (!(key instanceof String)) {
-			return true;
-		}
-		return acceptedAttributeNameRegex.matcher((String)key).matches();
-	}
+        return acceptedAttributeNameRegex == null ||
+                !(key instanceof String) ||
+                acceptedAttributeNameRegex.matcher((String) key).matches();
+    }
 
 	private int readLength() {
 		int delimiter = input.indexOf(':', index);
@@ -150,8 +145,6 @@ public class SerializedPhpParser {
 
 	/**
 	 * Assumes strings are utf8 encoded
-	 *
-	 * @return
 	 */
 	private String parseString() {
 		int strLen = readLength();
@@ -228,7 +221,7 @@ public class SerializedPhpParser {
 	 */
 	public static class PhpObject {
 		public String name;
-		public Map<Object, Object> attributes = new HashMap<Object, Object>();
+		public Map<Object, Object> attributes = new HashMap<>();
 
 		@Override
 		public String toString() {
