@@ -4,7 +4,8 @@ import sbt.Keys._
 object Build extends sbt.Build {
   val baseSettings = Project.defaultSettings ++ Seq(
     scalaVersion := "2.10.2",
-    scalacOptions ++= Seq("-feature", "-deprecation")
+    scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-feature"/*, "-optimise", "-Yinline-warnings"*/),
+    javacOptions  ++= Seq("-encoding", "UTF-8", "-source", "1.7", "-target", "1.7", "-Xlint:unchecked", "-Xlint:deprecation")
   )
 
   lazy val common = Project(
