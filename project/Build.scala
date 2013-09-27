@@ -3,7 +3,7 @@ import sbt.Keys._
 
 object Build extends sbt.Build {
   val baseSettings = Project.defaultSettings ++ Seq(
-    scalaVersion := "2.10.2",
+    scalaVersion := "2.10.3",
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-feature", "-Yinline-warnings"/*, "-optimise"*/),
     javacOptions  ++= Seq("-encoding", "UTF-8", "-source", "1.7", "-target", "1.7", "-Xlint:unchecked", "-Xlint:deprecation")
   )

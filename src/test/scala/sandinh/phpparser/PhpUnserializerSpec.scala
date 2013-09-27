@@ -3,7 +3,6 @@ package sandinh.phpparser
 import org.scalatest.{Matchers, FlatSpec}
 import scala.collection.mutable
 import scala.annotation.tailrec
-import scala.util.{Success, Try}
 
 class PhpUnserializerSpec extends FlatSpec with Matchers{
   "Parser" should "parse null" in {
@@ -113,12 +112,12 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
     r.toString should include ("supẩrb")
   }
 
-  "parsing from byte array" should "success" in {
-    //this is exported from XenForo table xf_captcha_question / column `answers`
+  "Parser" should "parsing from byte array" in {
+    //this is exported from XenForo table xf_captcha_question / column `answers` (type BLOB)
     //a:4:{i:0;s:23:"cường ẩ ẵ ự:;"";i:1;s:6:"giabao";i:2;s:4:"vinh";i:3;s:3:"hai";}
     val exported = "613a343a7b693a303b733a32333a2263c6b0e1bb9d6e6720e1baa920e1bab520e1bbb13a3b22223b693a313b733a363a2267696162616f223b693a323b733a343a2276696e68223b693a333b733a333a22686169223b7d"
 
-    def convert(s: String): String = {
+    def convert(s: String): Array[Byte] = {
       assert(s.length % 2 == 0)
       var i = 0
       val a = mutable.ArrayBuilder.make[Byte]
@@ -133,16 +132,26 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
       }
 
       take2()
-
-      new String(a.result(), "utf-8")
+      a.result()
     }
 
-    val input = convert(exported)
+    val blob = convert(exported)
+    //If we have blob data = sql fetch from a BLOB column (data is saved from php using serialize() function)
+    //Then in scala (java) we need prepare input for PhpUnserializer by calling:
+    //input = new String(data, "utf-8")
+    val input = new String(blob, "utf-8")
     val result = PhpUnserializer.parse(input)
     assert(result.isInstanceOf[Map[_, _]], "parsed value must be Map")
     val r = result.asInstanceOf[Map[String, _]]
     r should have size 4
     r should contain key "0"
     r should contain value "cường ẩ ẵ ự:;\""
+
+    val expectedAnswers = r
+    def validate(answer: String) = expectedAnswers.exists{
+      case (_, s: String) => answer.equalsIgnoreCase(s)
+      case _ => false
+    }
+    assert(validate("cƯỜnG Ẩ Ẵ Ự:;\""))
   }
 }
