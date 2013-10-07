@@ -47,4 +47,12 @@ pomExtra := (
       <organization>Sân Đình</organization>
       <organizationUrl>http://sandinh.com</organizationUrl>
     </developer>
+    <developer>
+      <id>lorecraft</id>
+      <email>lorecraft@gmail.com</email>
+    </developer>
+    <developer>
+      <id>forpdfsending</id>
+      <email>forpdfsending@gmail.com</email>
+    </developer>
   </developers>)
