@@ -1,4 +1,4 @@
-package sandinh.phpparser
+package com.sandinh.phpparser
 
 import scala.util.Try
 
