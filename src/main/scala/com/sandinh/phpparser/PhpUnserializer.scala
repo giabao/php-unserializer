@@ -3,12 +3,13 @@ package com.sandinh.phpparser
 import scala.util.Try
 
 object PhpUnserializer{
+  @inline def parse(input: Array[Byte]) = new PhpUnserializer(new String(input, "UTF-8")).parse
   @inline def parse(input: String) = new PhpUnserializer(input).parse
 }
 class PhpUnserializer(input: String) {
   private var index = 0
 
-  def parse = {
+  private def parse = {
     val t = input.charAt(index)
     t match {
       case 'N' =>

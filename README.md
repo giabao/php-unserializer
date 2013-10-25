@@ -12,10 +12,7 @@ The code below will validate if answer is correct:
 ```scala
 val blob: Array[Byte] = getDataFromDB()
 
-//If we have blob data = sql fetch from a BLOB column (data is saved from php using serialize() function)
-//Then in scala (java) we need prepare input for PhpUnserializer by calling:
-//input = new String(data, "utf-8")
-val input = new String(blob, "utf-8")
+val result = PhpUnserializer.parse(blob)
 
 assert(result.isInstanceOf[Map[_, _]], "parsed value must be Map")
 
@@ -31,6 +28,15 @@ def validate(answer: String) = expectedAnswers.exists{
 assert(validate("cƯỜnG Ẩ Ẵ Ự:;\""))
 ```
 @see full test code in [PhpUnserializerSpec.scala](https://github.com/giabao/php-unserializer/blob/master/src/test/scala/com/sandinh/phpparser/PhpUnserializerSpec.scala)
+
+### Changelogs
+We use [Semantic Versioning](http://semver.org), so changing in micro version is binary compatible.
+
+##### v1.0.1
+Add PhpUnserializer#parse(Array[Byte])
+
+##### v1.0.0
+First stable release
 
 ### Licence
 This software is licensed under the Apache 2 license:

@@ -117,7 +117,7 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
     //a:4:{i:0;s:23:"cường ẩ ẵ ự:;"";i:1;s:6:"giabao";i:2;s:4:"vinh";i:3;s:3:"hai";}
     val exported = "613a343a7b693a303b733a32333a2263c6b0e1bb9d6e6720e1baa920e1bab520e1bbb13a3b22223b693a313b733a363a2267696162616f223b693a323b733a343a2276696e68223b693a333b733a333a22686169223b7d"
 
-    def convert(s: String): Array[Byte] = {
+    def unHex(s: String): Array[Byte] = {
       assert(s.length % 2 == 0)
       var i = 0
       val a = mutable.ArrayBuilder.make[Byte]
@@ -135,12 +135,8 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
       a.result()
     }
 
-    val blob = convert(exported)
-    //If we have blob data = sql fetch from a BLOB column (data is saved from php using serialize() function)
-    //Then in scala (java) we need prepare input for PhpUnserializer by calling:
-    //input = new String(data, "utf-8")
-    val input = new String(blob, "utf-8")
-    val result = PhpUnserializer.parse(input)
+    val blob = unHex(exported)
+    val result = PhpUnserializer.parse(blob)
     assert(result.isInstanceOf[Map[_, _]], "parsed value must be Map")
     val r = result.asInstanceOf[Map[String, _]]
     r should have size 4

@@ -2,7 +2,7 @@ organization := "com.sandinh"
 
 name := "php-unserializer"
 
-version := "1.0.0"
+version := "1.0.1"
 
 scalaVersion := "2.10.3"
 
@@ -10,7 +10,7 @@ scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-feat
 
 javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.7", "-target", "1.7", "-Xlint:unchecked", "-Xlint:deprecation")
 
-libraryDependencies += "org.scalatest"  %% "scalatest"  % "2.0.M8"  % "test"
+libraryDependencies += "org.scalatest"  %% "scalatest"  % "2.0.RC2"  % "test"
 
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
