@@ -2,6 +2,12 @@ php-unserializer
 ========================
 This is a library for parsing [php-serialized](http://php.net/manual/en/function.serialize.php) data to [scala](http://scala-lang.org/) object.
 
+For [SBT](http://www.scala-sbt.org/), add the following to your build file.
+
+```scala
+libraryDependencies += "com.sandinh" % "php-unserializer_2.10" % "1.0.1"
+```
+
 ### Sample usage
 (This is my real usage)
 
@@ -31,6 +37,9 @@ assert(validate("cƯỜnG Ẩ Ẵ Ự:;\""))
 
 ### Changelogs
 We use [Semantic Versioning](http://semver.org), so changing in micro version is binary compatible.
+
+##### v1.0.2
+Improved exception handling.
 
 ##### v1.0.1
 Add PhpUnserializer#parse(Array[Byte])
