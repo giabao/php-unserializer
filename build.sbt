@@ -55,4 +55,11 @@ pomExtra := (
       <id>forpdfsending</id>
       <email>forpdfsending@gmail.com</email>
     </developer>
+    <developer>
+      <id>giabao</id>
+      <name>Aaron S. Hawley</name>
+      <email>aaron.s.hawley@gmail.com</email>
+      <organization>NinthFloor.org</organization>
+      <organizationUrl>http://users.ninthfloor.org/~ashawley/</organizationUrl>
+    </developer>
   </developers>)
