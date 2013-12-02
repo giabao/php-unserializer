@@ -10,6 +10,8 @@ class PhpUnserializer(input: String) {
   private var index = 0
 
   private def parse = {
+    if (index >= input.length)
+      throw new IllegalStateException(s"End of input at $index")
     val t = input.charAt(index)
     t match {
       case 'N' =>
@@ -43,28 +45,35 @@ class PhpUnserializer(input: String) {
   }
 
   private def parseBoolean = {
-    val delimiter = input.indexOf(';', index)
+    val delimiter = parseDelimiter(';')
     val value = input.substring(index, delimiter)
     index = delimiter + 1
     value == "1"
   }
 
   private def parseFloat: Double = {
-    val delimiter = input.indexOf(';', index)
+    val delimiter = parseDelimiter(';')
     val value = input.substring(index, delimiter)
     index = delimiter + 1
     value.toDouble
   }
 
   private def parseInt = {
-    val delimiter = input.indexOf(';', index)
+    val delimiter = parseDelimiter(';')
     val value = input.substring(index, delimiter)
     index = delimiter + 1
     value.toInt
   }
 
+  private def parseDelimiter(ch: Char) = {
+    val delim = input.indexOf(ch, index)
+    if (delim < 0)
+      throw new IllegalStateException(s"No length found at $index")
+    delim
+  }
+    
   private def readLength = {
-    val delimiter = input.indexOf(':', index)
+    val delimiter = parseDelimiter(':')
     val arrayLen = input.substring(index, delimiter).toInt
     index = delimiter + 2
     arrayLen
@@ -88,6 +97,8 @@ class PhpUnserializer(input: String) {
         byteCount += 2
       }
     }
+    if (index + utfStrLen > input.length)
+      throw new IllegalStateException(s"End of input at ${input.length}")
     val value = input.substring(index, index + utfStrLen)
     index = index + utfStrLen + 2
     value
@@ -114,6 +125,8 @@ class PhpUnserializer(input: String) {
   /** return tuble2: (name, map of attributes)*/
   private def parseObject: (String, Map[String, Any]) = {
     val strLen = readLength
+    if (index + strLen > input.length)
+      throw new IllegalStateException(s"End of input at ${input.length}")
     val name = input.substring(index, index + strLen)
     index = index + strLen + 2
     val attributes = parseArray
