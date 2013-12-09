@@ -5,7 +5,7 @@ This is a library for parsing [php-serialized](http://php.net/manual/en/function
 For [SBT](http://www.scala-sbt.org/), add the following to your build file.
 
 ```scala
-libraryDependencies += "com.sandinh" % "php-unserializer_2.10" % "1.0.1"
+libraryDependencies += "com.sandinh" % "php-unserializer_2.10" % "1.0.2"
 ```
 
 ### Sample usage

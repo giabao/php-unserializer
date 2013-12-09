@@ -2,7 +2,7 @@ organization := "com.sandinh"
 
 name := "php-unserializer"
 
-version := "1.0.1"
+version := "1.0.2"
 
 scalaVersion := "2.10.3"
 
@@ -10,7 +10,7 @@ scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-feat
 
 javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.7", "-target", "1.7", "-Xlint:unchecked", "-Xlint:deprecation")
 
-libraryDependencies += "org.scalatest"  %% "scalatest"  % "2.0.RC2"  % "test"
+libraryDependencies += "org.scalatest"  %% "scalatest"  % "2.0"  % "test"
 
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
@@ -26,8 +26,7 @@ publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
 
-pomExtra := (
-  <url>https://github.com/giabao/php-unserializer</url>
+pomExtra := <url>https://github.com/giabao/php-unserializer</url>
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -62,4 +61,4 @@ pomExtra := (
       <organization>NinthFloor.org</organization>
       <organizationUrl>http://users.ninthfloor.org/~ashawley/</organizationUrl>
     </developer>
-  </developers>)
+  </developers>

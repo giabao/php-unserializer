@@ -68,7 +68,7 @@ class PhpUnserializer(input: String) {
   private def parseDelimiter(ch: Char) = {
     val delim = input.indexOf(ch, index)
     if (delim < 0)
-      throw new IllegalStateException(s"No length found at $index")
+      throw new IllegalStateException(s"No delimiter $ch found at $index")
     delim
   }
     
@@ -97,6 +97,7 @@ class PhpUnserializer(input: String) {
         byteCount += 2
       }
     }
+    //TODO explain this check & add a test case for it
     if (index + utfStrLen > input.length)
       throw new IllegalStateException(s"End of input at ${input.length}")
     val value = input.substring(index, index + utfStrLen)
