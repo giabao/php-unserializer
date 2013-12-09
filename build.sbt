@@ -56,7 +56,7 @@ pomExtra := (
       <email>forpdfsending@gmail.com</email>
     </developer>
     <developer>
-      <id>giabao</id>
+      <id>ashawley</id>
       <name>Aaron S. Hawley</name>
       <email>aaron.s.hawley@gmail.com</email>
       <organization>NinthFloor.org</organization>
