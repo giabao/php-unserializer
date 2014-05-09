@@ -1,17 +1,20 @@
 php-unserializer
 ========================
-This is a library for parsing [php-serialized](http://php.net/manual/en/function.serialize.php) data to [scala](http://scala-lang.org/) object.
+This is a library for parsing [php-serialized](http://php.net/manual/en/function.serialize.php)
+data to [scala](http://scala-lang.org/) object.
 
 For [SBT](http://www.scala-sbt.org/), add the following to your build file.
 
 ```scala
-libraryDependencies += "com.sandinh" % "php-unserializer_2.10" % "1.0.2"
+libraryDependencies += "com.sandinh" %% "php-unserializer" % "1.0.3"
 ```
 
 ### Sample usage
 (This is my real usage)
 
-I have a RESTful service implemented in scala (use [Play Framework](http://www.playframework.com/)) that need integrate to an existing website (use [XenForo](http://xenforo.com/)) to check if user is logged in & send a validated captcha when call my service.
+I have a RESTful service implemented in scala (use [Play Framework](http://www.playframework.com/))
+that need integrate to an existing website (use [XenForo](http://xenforo.com/)) to check if user is
+logged in & send a validated captcha when call my service.
 
 Captcha correct answers is stored (by XenForo) in a BLOB column in Mysql.
 The code below will validate if answer is correct:
@@ -37,6 +40,9 @@ assert(validate("cƯỜnG Ẩ Ẵ Ự:;\""))
 
 ### Changelogs
 We use [Semantic Versioning](http://semver.org), so changing in micro version is binary compatible.
+
+##### v1.0.3
+cross compile to scala 2.11 & 2.10
 
 ##### v1.0.2
 Improved exception handling.
