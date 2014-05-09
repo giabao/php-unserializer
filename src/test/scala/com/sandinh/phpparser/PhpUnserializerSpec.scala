@@ -4,7 +4,7 @@ import org.scalatest.{Matchers, FlatSpec}
 import scala.collection.mutable
 import scala.annotation.tailrec
 
-class PhpUnserializerSpec extends FlatSpec with Matchers{
+class PhpUnserializerSpec extends FlatSpec with Matchers {
   "Parser" should "parse null" in {
     assert(PhpUnserializer.parse("N;") == null)
   }
@@ -26,7 +26,7 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
   }
 
   "Parser" should "parse int" in {
-    PhpUnserializer.parse("i:123;") should be (123)
+    PhpUnserializer.parse("i:123;") should be(123)
   }
 
   "Parser" should "not parse invalid int" in {
@@ -42,13 +42,13 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
   }
 
   "Parser" should "parse float" in {
-    PhpUnserializer.parse("d:123.123;") should be (123.123d)
+    PhpUnserializer.parse("d:123.123;") should be(123.123d)
   }
 
   "Parser" should "parse in as float" in {
-    PhpUnserializer.parse("i:3422865137422183;") should be (3.422865137422183E15)
+    PhpUnserializer.parse("i:3422865137422183;") should be(3.422865137422183E15)
 
-    PhpUnserializer.parse("i:100010001804;") should be ( 1.00010001804E11)
+    PhpUnserializer.parse("i:100010001804;") should be(1.00010001804E11)
   }
 
   "Parser" should "not parse invalid float" in {
@@ -64,7 +64,7 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
   }
 
   "Parser" should "parse string" in {
-    PhpUnserializer.parse("""s:6:"string";""") should be ("string")
+    PhpUnserializer.parse("""s:6:"string";""") should be("string")
   }
 
   "Parser" should "not parse the empty string" in {
@@ -138,12 +138,12 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
   "Parser" should "parse object" in {
     val parsed = PhpUnserializer.parse("""O:8:"TypeName":1:{s:3:"foo";s:3:"bar";}""")
     val r = shouldBeObj(parsed, "TypeName", 1)
-    r should contain ("foo" -> "bar")
+    r should contain("foo" -> "bar")
   }
 
   "Parser" should "parse stdClass" in {
-    PhpUnserializer.parse("""O:8:"stdClass":0:{}""").asInstanceOf[(String, _)] should be ("stdClass", Map())
-    PhpUnserializer.parse("""O:8:"stdClass":0:""").asInstanceOf[(String, _)] should be ("stdClass", Map())
+    PhpUnserializer.parse("""O:8:"stdClass":0:{}""").asInstanceOf[(String, _)] should be("stdClass", Map())
+    PhpUnserializer.parse("""O:8:"stdClass":0:""").asInstanceOf[(String, _)] should be("stdClass", Map())
   }
 
   "Parser" should "not parse invalid object" in {
@@ -169,9 +169,9 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
   }
 
   "Parser" should "parse complex" in {
-    try{
+    try {
       PhpUnserializer.parse("""a:2:{i:0;a:8:{s:5:"class";O:7:"MyClass":1:{s:5:"pippo";s:4:"test";}i:0;i:1;i:1;d:0.19999998807907104;i:2;b:1;i:3;b:0;i:4;N;i:5;a:1:{i:0;s:1:";";}i:6;O:6:"Object":0:{}}i:1;a:8:{s:5:"class";O:7:"MyClass":1:{s:5:"pippo";s:4:"test";}i:0;i:1;i:1;d:0.19999998807907104;i:2;b:1;i:3;b:0;i:4;N;i:5;a:1:{i:0;s:1:";";}i:6;O:6:"Object":0:{}}}""")
-    }catch{
+    } catch {
       case _: Exception => fail("can't parse!")
     }
 
@@ -218,7 +218,7 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
         |s:20:"1156837966_352721747";s:11:"extraFields";a:1:{s:11:"Description";s:0:"";}s:4:"rank";N;s:7:"version";i:37;s:7:"emailMe";N;}}
         |""".stripMargin.replace("\r\n", "").replace("\n", "")
     val r = shouldBeMap(PhpUnserializer.parse(input), 1)
-    r.toString should include ("supẩrb")
+    r.toString should include("supẩrb")
   }
 
   "Parser" should "parsing from byte array" in {
@@ -237,7 +237,7 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
         i += 2
         val c = Integer.parseInt(ret, 16)
         a += c.toByte
-        if(i < s.length) take2()
+        if (i < s.length) take2()
       }
 
       take2()
@@ -253,9 +253,9 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
     r should contain value "cường ẩ ẵ ự:;\""
 
     val expectedAnswers = r
-    def validate(answer: String) = expectedAnswers.exists{
+    def validate(answer: String) = expectedAnswers.exists {
       case (_, s: String) => answer.equalsIgnoreCase(s)
-      case _ => false
+      case _              => false
     }
     assert(validate("cƯỜnG Ẩ Ẵ Ự:;\""))
   }

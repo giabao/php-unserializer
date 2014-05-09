@@ -2,7 +2,7 @@ package com.sandinh.phpparser
 
 import scala.util.Try
 
-object PhpUnserializer{
+object PhpUnserializer {
   @inline def parse(input: Array[Byte]) = new PhpUnserializer(new String(input, "UTF-8")).parse
   @inline def parse(input: String) = new PhpUnserializer(input).parse
 }
@@ -27,7 +27,7 @@ class PhpUnserializer(input: String) {
         index += 2
         // Let's store old value of the index for the patch Integer/Double for the PHP x64.
         val index_old = index
-        Try(parseInt).getOrElse{
+        Try(parseInt).getOrElse {
           index = index_old
           parseFloat
         }
@@ -71,7 +71,7 @@ class PhpUnserializer(input: String) {
       throw new IllegalStateException(s"No delimiter $ch found at $index")
     delim
   }
-    
+
   private def readLength = {
     val delimiter = parseDelimiter(':')
     val arrayLen = input.substring(index, delimiter).toInt
@@ -79,9 +79,7 @@ class PhpUnserializer(input: String) {
     arrayLen
   }
 
-  /**
-   * Assumes strings are utf8 encoded
-   */
+  /** Assumes strings are utf8 encoded */
   private def parseString = {
     val strLen = readLength
     var utfStrLen = 0
@@ -113,9 +111,9 @@ class PhpUnserializer(input: String) {
       val key = parse
       val value = parse
       key match {
-        case k: Int     => result += k.toString -> value
-        case k: String  => result += k -> value
-        case _ => throw new IllegalStateException(s"Encountered unacceptable key [$key]")
+        case k: Int    => result += k.toString -> value
+        case k: String => result += k -> value
+        case _         => throw new IllegalStateException(s"Encountered unacceptable key [$key]")
       }
       i += 1
     }
