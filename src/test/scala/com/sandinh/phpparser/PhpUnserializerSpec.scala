@@ -232,7 +232,7 @@ class PhpUnserializerSpec extends FlatSpec with Matchers{
       val a = mutable.ArrayBuilder.make[Byte]
 
       @tailrec
-      def take2() {
+      def take2(): Unit = {
         val ret = s.substring(i, i + 2)
         i += 2
         val c = Integer.parseInt(ret, 16)
