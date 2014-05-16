@@ -22,15 +22,10 @@ class PhpUnserializer(input: String) {
         parseBoolean
       case 'd' =>
         index += 2
-        parseFloat
+        parseDouble
       case 'i' =>
         index += 2
-        // Let's store old value of the index for the patch Integer/Double for the PHP x64.
-        val index_old = index
-        Try(parseInt).getOrElse {
-          index = index_old
-          parseFloat
-        }
+        parseIntOrLong
       case 's' =>
         index += 2
         parseString
@@ -51,18 +46,20 @@ class PhpUnserializer(input: String) {
     value == "1"
   }
 
-  private def parseFloat: Double = {
+  private def parseDouble = {
     val delimiter = parseDelimiter(';')
     val value = input.substring(index, delimiter)
     index = delimiter + 1
     value.toDouble
   }
 
-  private def parseInt = {
+  /** @return Int | Long */
+  private def parseIntOrLong = {
     val delimiter = parseDelimiter(';')
     val value = input.substring(index, delimiter)
     index = delimiter + 1
-    value.toInt
+    // Let's store old value of the index for the patch Integer/Double for the PHP x64.
+    Try { value.toInt } getOrElse value.toLong
   }
 
   private def parseDelimiter(ch: Char) = {
