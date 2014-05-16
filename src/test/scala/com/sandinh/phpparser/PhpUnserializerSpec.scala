@@ -225,4 +225,9 @@ class PhpUnserializerSpec extends FlatSpec with Matchers {
     }
     assert(validate("cƯỜnG Ẩ Ẵ Ự:;\""))
   }
+
+  "Parser" should "parse Tiếng Việt" in {
+    val r = shouldBeMap(parse("""a:2:{s:2:"k1";s:6:"value1";s:2:"k2";s:14:"Tiếng Việt";}"""), 2)
+    r should contain theSameElementsAs Map("k1" -> "value1", "k2" -> "Tiếng Việt")
+  }
 }
