@@ -41,6 +41,10 @@ assert(validate("cƯỜnG Ẩ Ẵ Ự:;\""))
 ### Changelogs
 We use [Semantic Versioning](http://semver.org), so changing in micro version is binary compatible.
 
+##### v1.0.4
++ parse large int to Long instead of Double
++ add more test
+
 ##### v1.0.3
 cross compile to scala 2.11 & 2.10
 
