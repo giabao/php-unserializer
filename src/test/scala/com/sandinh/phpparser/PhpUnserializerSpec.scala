@@ -3,92 +3,76 @@ package com.sandinh.phpparser
 import org.scalatest.{Matchers, FlatSpec}
 import scala.collection.mutable
 import scala.annotation.tailrec
+import PhpUnserializer.parse
 
 class PhpUnserializerSpec extends FlatSpec with Matchers {
   "Parser" should "parse null" in {
-    assert(PhpUnserializer.parse("N;") == null)
+    assert(parse("N;") == null)
   }
 
   "Parser" should "parse bool" in {
-    assert(PhpUnserializer.parse("b:1;") == true)
-    assert(PhpUnserializer.parse("b:0;") == false)
-    assert(PhpUnserializer.parse("b:;") == false)
+    assert(parse("b:1;") == true)
+    assert(parse("b:0;") == false)
+    assert(parse("b:;") == false)
 
   }
 
   "Parser" should "not parse invalid bool" in {
     intercept[IllegalStateException] {
-      PhpUnserializer.parse("b")
+      parse("b")
     }
     intercept[IllegalStateException] {
-      PhpUnserializer.parse("b:")
+      parse("b:")
     }
   }
 
   "Parser" should "parse int" in {
-    PhpUnserializer.parse("i:123;") should be(123)
+    parse("i:123;") shouldBe 123
+    parse("i:123;") shouldBe an[Integer]
+    parse("i:123;") shouldNot be(a[java.lang.Long])
   }
 
   "Parser" should "not parse invalid int" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("i")
-    }
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("i:")
-    }
-    intercept[NumberFormatException] {
-      PhpUnserializer.parse("i:;")
-    }
+    intercept[IllegalStateException] { parse("i") }
+    intercept[IllegalStateException] { parse("i:") }
+    intercept[NumberFormatException] { parse("i:;") }
   }
 
-  "Parser" should "parse float" in {
-    PhpUnserializer.parse("d:123.123;") should be(123.123d)
+  "Parser" should "parse double" in {
+    parse("d:123.123;") shouldBe 123.123
+    parse("d:123.123;") shouldBe a[java.lang.Double]
   }
 
-  "Parser" should "parse in as float" in {
-    PhpUnserializer.parse("i:3422865137422183;") should be(3.422865137422183E15)
-
-    PhpUnserializer.parse("i:100010001804;") should be(1.00010001804E11)
+  "Parser" should "parse in as long" in {
+    parse("i:3422865137422183;") shouldBe 3422865137422183L
+    parse("i:3422865137422183;") shouldBe a[java.lang.Long]
+    parse("i:100010001804;") shouldBe 100010001804D
   }
 
   "Parser" should "not parse invalid float" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("f")
-    }
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("f:")
-    }
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("f:;")
-    }
+    intercept[IllegalStateException] { parse("f") }
+    intercept[IllegalStateException] { parse("f:") }
+    intercept[IllegalStateException] { parse("f:;") }
   }
 
   "Parser" should "parse string" in {
-    PhpUnserializer.parse("""s:6:"string";""") should be("string")
+    parse("""s:6:"string";""") should be("string")
   }
 
   "Parser" should "not parse the empty string" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("")
-    }
+    intercept[IllegalStateException] { parse("") }
   }
 
   "Parser" should "not parse an invalid string" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("s")
-    }
+    intercept[IllegalStateException] { parse("s") }
   }
 
   "Parser" should "not parse string when length is missing" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("s:")
-    }
+    intercept[IllegalStateException] { parse("s:") }
   }
 
   "Parser" should "not parse when string is missing" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("s:0:")
-    }
+    intercept[IllegalStateException] { parse("s:0:") }
   }
 
   def shouldBeMap(x: Any, size: Int) = {
@@ -101,76 +85,61 @@ class PhpUnserializerSpec extends FlatSpec with Matchers {
   def shouldBeObj(x: Any, name: String, size: Int) = {
     assert(x.isInstanceOf[(_, _)], "parsed value must be tuble2(String, Map)")
     val r = x.asInstanceOf[(String, Map[_, _])]
-    r._1 should be(name)
+    r._1 shouldBe name
     shouldBeMap(r._2, size)
   }
 
   "Parser" should "parse array" in {
-    val parsed = PhpUnserializer.parse("a:1:{i:1;i:2;}")
+    val parsed = parse("a:1:{i:1;i:2;}")
     val r = shouldBeMap(parsed, 1)
     r should contain key "1"
     r should contain value 2
   }
 
   "Parser" should "not parse invalid array" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("a")
-    }
+    intercept[IllegalStateException] { parse("a") }
   }
 
   "Parser" should "not parse array when length is missing" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("a:")
-    }
+    intercept[IllegalStateException] { parse("a:") }
   }
 
   "Parser" should "parse empty array" in {
-    PhpUnserializer.parse("a:0:")
-    PhpUnserializer.parse("a:0:{}")
+    parse("a:0:")
+    parse("a:0:{}")
   }
 
   "Parser" should "not parse array when values missing" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("a:1:")
-    }
+    intercept[IllegalStateException] { parse("a:1:") }
   }
 
   "Parser" should "parse object" in {
-    val parsed = PhpUnserializer.parse("""O:8:"TypeName":1:{s:3:"foo";s:3:"bar";}""")
+    val parsed = parse("""O:8:"TypeName":1:{s:3:"foo";s:3:"bar";}""")
     val r = shouldBeObj(parsed, "TypeName", 1)
     r should contain("foo" -> "bar")
   }
 
   "Parser" should "parse stdClass" in {
-    PhpUnserializer.parse("""O:8:"stdClass":0:{}""").asInstanceOf[(String, _)] should be("stdClass", Map())
-    PhpUnserializer.parse("""O:8:"stdClass":0:""").asInstanceOf[(String, _)] should be("stdClass", Map())
+    parse("""O:8:"stdClass":0:{}""").asInstanceOf[(String, _)] should be("stdClass", Map())
+    parse("""O:8:"stdClass":0:""").asInstanceOf[(String, _)] should be("stdClass", Map())
   }
 
   "Parser" should "not parse invalid object" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("O")
-    }
+    intercept[IllegalStateException] { parse("O") }
   }
 
   "Parser" should "not parse when object length is missing" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("O:")
-    }
+    intercept[IllegalStateException] { parse("O:") }
   }
 
   "Parser" should "not parse when object is missing" in {
-    intercept[IllegalStateException] {
-      PhpUnserializer.parse("O:8:")
-    }
-    intercept[IllegalStateException] {
-      // O:8:"stdClass":0:{}
-      PhpUnserializer.parse("""O:8:"stdClass":1""")
-    }
+    intercept[IllegalStateException] { parse("O:8:") }
+    intercept[IllegalStateException] { parse("""O:8:"stdClass":1""") }
   }
 
   "Parser" should "parse complex" in {
     try {
-      PhpUnserializer.parse("""a:2:{i:0;a:8:{s:5:"class";O:7:"MyClass":1:{s:5:"pippo";s:4:"test";}i:0;i:1;i:1;d:0.19999998807907104;i:2;b:1;i:3;b:0;i:4;N;i:5;a:1:{i:0;s:1:";";}i:6;O:6:"Object":0:{}}i:1;a:8:{s:5:"class";O:7:"MyClass":1:{s:5:"pippo";s:4:"test";}i:0;i:1;i:1;d:0.19999998807907104;i:2;b:1;i:3;b:0;i:4;N;i:5;a:1:{i:0;s:1:";";}i:6;O:6:"Object":0:{}}}""")
+      parse("""a:2:{i:0;a:8:{s:5:"class";O:7:"MyClass":1:{s:5:"pippo";s:4:"test";}i:0;i:1;i:1;d:0.19999998807907104;i:2;b:1;i:3;b:0;i:4;N;i:5;a:1:{i:0;s:1:";";}i:6;O:6:"Object":0:{}}i:1;a:8:{s:5:"class";O:7:"MyClass":1:{s:5:"pippo";s:4:"test";}i:0;i:1;i:1;d:0.19999998807907104;i:2;b:1;i:3;b:0;i:4;N;i:5;a:1:{i:0;s:1:";";}i:6;O:6:"Object":0:{}}}""")
     } catch {
       case _: Exception => fail("can't parse!")
     }
@@ -194,8 +163,8 @@ class PhpUnserializerSpec extends FlatSpec with Matchers {
         |s:10:"FileFormat";s:4:"jpeg";s:6:"Height";s:3:"518";s:5:"Width";s:3:"700";
         |s:9:"Thumbnail";a:3:{s:3:"Url";s:42:"http://sp1.mm-a2.yimg.com/image/2295545420";
         |s:6:"Height";s:3:"111";s:5:"Width";s:3:"150";}}}}}
-        |""".stripMargin.replace("\r\n", "").replace("\n", "")
-    val r = shouldBeMap(PhpUnserializer.parse(input), 1)
+        |""".stripMargin.replaceAll("\r|\n", "")
+    val r = shouldBeMap(parse(input), 1)
     val r2 = shouldBeMap(r("ResultSet"), 4)
     shouldBeMap(r2("Result"), 2)
   }
@@ -216,8 +185,8 @@ class PhpUnserializerSpec extends FlatSpec with Matchers {
         |i:150;s:10:"raw_height";i:50;s:7:"version";i:37;}s:11:"isAlbumName";N;s:6:"clicks";N;s:8:"keywords";s:0:"";
         |s:8:"comments";N;s:10:"uploadDate";i:1196339460;s:15:"itemCaptureDate";i:1196339460;s:8:"exifData";N;s:5:"owner";
         |s:20:"1156837966_352721747";s:11:"extraFields";a:1:{s:11:"Description";s:0:"";}s:4:"rank";N;s:7:"version";i:37;s:7:"emailMe";N;}}
-        |""".stripMargin.replace("\r\n", "").replace("\n", "")
-    val r = shouldBeMap(PhpUnserializer.parse(input), 1)
+        |""".stripMargin.replaceAll("\r|\n", "")
+    val r = shouldBeMap(parse(input), 1)
     r.toString should include("supẩrb")
   }
 
@@ -245,10 +214,7 @@ class PhpUnserializerSpec extends FlatSpec with Matchers {
     }
 
     val blob = unHex(exported)
-    val result = PhpUnserializer.parse(blob)
-    assert(result.isInstanceOf[Map[_, _]], "parsed value must be Map")
-    val r = result.asInstanceOf[Map[String, _]]
-    r should have size 4
+    val r = shouldBeMap(parse(blob), 4)
     r should contain key "0"
     r should contain value "cường ẩ ẵ ự:;\""
 
